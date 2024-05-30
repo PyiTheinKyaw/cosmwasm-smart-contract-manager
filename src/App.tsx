@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -11,7 +11,9 @@ import Store from './component/Store';
 import Instantiate from './component/Instantiate';
 import StoreResult from './component/StoreResult';
 import StoredList from './component/StoredList';
-import User from './lib/connect_wallet';
+import User from './component/Users';
+import TransactionList from './component/RecentTransactions';
+import { WalletInfo } from './component/interface/IWalletInfo';
 
 const { Header, Sider, Content } = Layout;
 
@@ -21,12 +23,15 @@ const boxStyle: React.CSSProperties = {
 
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-
-
+  const [walletInfo, setWalletInfo] = useState<WalletInfo>();
 
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const isWalletConnected = (value: WalletInfo) => {
+    setWalletInfo(value)    
+  }
 
   return (
     <Layout>
@@ -72,9 +77,12 @@ const App: React.FC = () => {
               />
 
               {/* Connect to wallet */}
-              <User/>
+              <User onConnected={isWalletConnected}/>
+
             </Flex>
           </Flex>
+
+
 
         </Header>
         <Content
@@ -94,7 +102,14 @@ const App: React.FC = () => {
                 </Card>
               </div>
               <div style={{width: "30%", padding: "28px"}}>
-                <StoreResult />
+                
+                {walletInfo && 
+                  <TransactionList 
+                    address={walletInfo?.accounts[0].address}
+                    wsUrl={walletInfo?.ChainInfo.wss} 
+                  />
+                }
+                
               </div>
             </Flex>
 

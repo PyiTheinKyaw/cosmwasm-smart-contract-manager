@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Avatar, List, Radio, Space } from 'antd';
 
 const data = [
@@ -22,6 +22,10 @@ const data = [
 
 
 const StoreResult: React.FC = () => {
+
+  useEffect(() => {
+    
+  }, []);
 
   return (
     <>

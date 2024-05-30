@@ -1,0 +1,9 @@
+.image-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .image-container img.selected {
+    border: 2px solid rgb(81, 255, 0); /* Example style for selected image */
+  }
+  
