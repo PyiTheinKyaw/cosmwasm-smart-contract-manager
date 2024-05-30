@@ -20,10 +20,11 @@ const queryForBalanceUpdate = () => {
       method: 'subscribe',
       id: uuidv4().toString(),
       params: {
-        query: `tm.event = 'Tx' AND transfer.recipient CONTAINS '${address}'`,
+        query: `tm.event = 'Tx' AND transfer.sender = '${address}'`,
       },
     };
-
+  
+    // query: `tm.event = 'Tx' AND transfer.recipient CONTAINS '${address}'`,
     // query: `tm.event = 'Tx' AND (transfer.recipient CONTAINS '${address}' OR transfer.sender CONTAINS '${address})'`,
 
     // When the WebSocket connection is established, send the subscription request.
@@ -36,8 +37,10 @@ const queryForBalanceUpdate = () => {
       const eventData = JSON.parse(event);
       if (eventData && eventData.result && eventData.result.data) {
         console.log('Matching transaction found')
-        console.log(eventData.result.data);
-        console.log(eventData.result.data.value.TxResult.result);
+        tx_hash = eventData.result.events['tx.hash'];
+        console.log(eventData.result);
+
+        console.log(tx_hash)
         // disconnectFromWebsocket();
       }
     });

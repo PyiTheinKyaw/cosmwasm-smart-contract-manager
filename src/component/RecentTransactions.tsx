@@ -1,6 +1,38 @@
-import { Avatar, List } from 'antd';
 import React, { useEffect, useState } from 'react';
+import './RecentTransactions.css';
+import { Avatar, Button, Descriptions, DescriptionsProps, List } from 'antd';
+
 const { v4: uuidv4 } = require('uuid');
+
+
+const borderedItems: DescriptionsProps['items'] = [
+  {
+    key: '1',
+    span: { xl: 2, xxl: 2 },
+    label: 'Block Height',
+    children: 'Cloud Database',
+  },
+  {
+    key: '7',
+    label: 'Config Info',
+    children: (
+      <>
+        Sender: {}
+        <br />
+        Database version: 3.4
+        <br />
+        Package: dds.mongo.mid
+        <br />
+        Storage space: 10 GB
+        <br />
+        Replication factor: 3
+        <br />
+        Region: East China 1
+        <br />
+      </>
+    ),
+  },
+];
 
 interface TransactionsProps {
   address: any,
@@ -33,12 +65,26 @@ const data = [
   },
 ];
 
+interface IRecentTransaction {
+  sender: string,
+  recipients: [string],
+  block_height: string,
+  tx_fee: string,
+  tx_hash: string
+}
+
 const TransactionList: React.FC<TransactionsProps> = ({ address, wsUrl }) => {
-  const [transactions, setTransactions] = useState([]);
+  const [items, setItems] = useState<IRecentTransaction[]>();
+  const [isComingIn, setComingIn] = useState(false);
+  const [borderedItems, setBorderedItems] = useState<DescriptionsProps>();
 
   const [ws, setWs] = useState<WebSocket>();
   const [wsQuery, setWsQuery] = useState<IWsQuery>();
 
+  useEffect(() => {
+    console.log("New coming in.")
+    console.log(items)
+  }, [isComingIn])
 
   useEffect(() => {
     const newWs = new WebSocket(wsUrl);
@@ -48,13 +94,12 @@ const TransactionList: React.FC<TransactionsProps> = ({ address, wsUrl }) => {
       method: 'subscribe',
       id: uuidv4().toString(),
       params: {
-        query: `tm.event = 'Tx' AND transfer.recipient CONTAINS '${address}'`,
+        query: `tm.event = 'Tx' AND transfer.sender = '${address}'`,
       },
     };
 
     newWs.onopen = () => {
       newWs.send(JSON.stringify(wsQuery));
-      console.log('websocket connected.')
       setWsQuery(wsQuery)
       setWs(newWs)
     }
@@ -65,14 +110,34 @@ const TransactionList: React.FC<TransactionsProps> = ({ address, wsUrl }) => {
     }
 
     newWs.onmessage = (event) => {
-      const eventData = event.data;
       
-      if (eventData && eventData.result && eventData.result.data) {
-        console.log('Matching transaction found' + JSON.stringify(eventData.result.data));        
-        disconnectFromWebsocket();      
+      const eventData = JSON.parse(event.data);
+
+      if(eventData.result && eventData.result.events) {
+        
+        let events = eventData.result.events;
+        
+        let recentTransaction: IRecentTransaction = {
+          sender: events["transfer.sender"][0],
+          recipients: events["transfer.recipient"],
+          block_height: events["tx.height"][0],
+          tx_fee: events["tx.fee"][0],
+          tx_hash: events["tx.hash"][0]
+        }
+
+        if(items !== undefined || items != null ) {
+          setItems((old: any)=> [...old, recentTransaction])
+        }
+
+        else {
+          setItems([recentTransaction])
+        }
+        
+        setComingIn(true)
       }
     }
 
+    return () => ws?.close();
   }, []);
 
   const disconnectFromWebsocket = () => {
@@ -86,18 +151,14 @@ const TransactionList: React.FC<TransactionsProps> = ({ address, wsUrl }) => {
       <h1>
         Recent Transactions
       </h1>
-      <List
-        dataSource={data}
-        renderItem={(item, index) => (
-          <List.Item>
-            <List.Item.Meta
-              avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
-              title={item.label}
-              description={item.desc}
-            />
-          </List.Item>
-        )}
-      />
+      <List>
+        <Descriptions
+          bordered
+          title="Recent Transaction"
+          size='small'        
+          items={borderedItems}
+        />
+      </List>
     </>
   );
 };
