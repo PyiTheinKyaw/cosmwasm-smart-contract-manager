@@ -21,6 +21,10 @@ const boxStyle: React.CSSProperties = {
   width: '100%'
 };
 
+const cardStyle: React.CSSProperties = {
+  maxHeight: '60vh'
+}
+
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [walletInfo, setWalletInfo] = useState<WalletInfo>();
@@ -36,7 +40,7 @@ const App: React.FC = () => {
   return (
     <Layout>
       {/* Slide bar */}
-      <Sider trigger={null} collapsible collapsed={collapsed} style={{height: '100vh'}}>
+      <Sider trigger={null} collapsible collapsed={collapsed} style={{height: '200vh'}}>
         <div className="demo-logo-vertical" />
         <Menu
           theme="dark"
@@ -81,9 +85,6 @@ const App: React.FC = () => {
 
             </Flex>
           </Flex>
-
-
-
         </Header>
         <Content
           style={{
@@ -95,26 +96,29 @@ const App: React.FC = () => {
           }}
         >
           <Flex gap="middle" align="start" vertical>
-            <Flex justify='space-evenly' align='center' style={boxStyle}>
-              <div >
-                <Card title="Store your cotract byte codes" bordered={false}>
+            <Flex justify='space-evenly' align='flex-start' style={boxStyle}>
+              <div>
+                <Card title="Store your contract byte codes" bordered={false} style={cardStyle}>
                   <Store />
                 </Card>
               </div>
-              <div style={{width: "30%", padding: "28px"}}>
-                
-                {walletInfo && 
-                  <TransactionList 
-                    address={walletInfo?.accounts[0].address}
-                    wsUrl={walletInfo?.ChainInfo.wss} 
-                  />
-                }
-                
+              
+              <div style={{paddingLeft: "28px", width: "40%"}}>
+                <Card title="Recent Transaction" bordered={false} style={cardStyle}>
+                  {walletInfo && 
+                    <TransactionList 
+                      address={walletInfo?.accounts[0].address}
+                      wsUrl={walletInfo?.ChainInfo.wss} 
+                    />
+                  }
+                </Card>
               </div>
             </Flex>
 
-            <Flex align='center' justify='center' style={boxStyle}>
-              <StoredList />
+            <Flex align='flex-start' justify='flex-start' style={boxStyle}>
+              {/* <Card title="Contracts Info"> */}
+                <StoredList />
+              {/* </Card> */}
             </Flex>
           </Flex>
 

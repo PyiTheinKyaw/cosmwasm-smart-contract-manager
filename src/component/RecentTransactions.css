@@ -1,9 +1,49 @@
-.list-item {
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-  }
-  
-  .list-item.new-item {
+.item {
+  /* background-color: #f0f0f0;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px; */
+  transition: all 0.3s ease;
+}
+
+.item:hover {
+  background-color: #ddd;
+}
+
+.item-enter {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.item-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.item-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.item-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.blinking {
+  animation: blink 500ms linear infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
     opacity: 1;
   }
+  50% {
+    opacity: 0;
+  }
+}
+
+  
   

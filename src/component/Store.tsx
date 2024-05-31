@@ -31,7 +31,7 @@ const items: MenuProps['items'] = [
 const Store: React.FC = () => (        
   <Form
     labelCol={{ span: 7 }}
-    wrapperCol={{ span: 10, offset: 2 }}
+    wrapperCol={{ span: 12, offset: 2 }}
     labelAlign='left'
     layout="horizontal"
     size='small'
