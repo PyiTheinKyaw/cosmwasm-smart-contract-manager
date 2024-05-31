@@ -78,7 +78,6 @@ const TransactionList: React.FC<TransactionsProps> = ({ address, wsUrl }) => {
         }
 
         initItems(recentTransaction)
-        setItems(markAsDone)
       }
     }
 
@@ -90,8 +89,6 @@ const TransactionList: React.FC<TransactionsProps> = ({ address, wsUrl }) => {
       setItems((prevItems: any) => [...prevItems, incomingItem])  
     }
   }, [incomingItem])
-
-  useEffect(() => { console.log(items) }, [items])
 
   const markAsDone = items.map((item) => {
     return {...item, is_new: false};
@@ -105,7 +102,7 @@ const TransactionList: React.FC<TransactionsProps> = ({ address, wsUrl }) => {
   const initItems = (recentTnx: IRecentTransaction) => {
     setIncomingItem(recentTnx)
     if(items.length > 0) {
-      // setItems(markAsDone)
+      setItems(markAsDone)
     }
   }
 

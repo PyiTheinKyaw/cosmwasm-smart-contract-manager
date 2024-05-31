@@ -27,18 +27,16 @@ const props: UploadProps = {
   onDrop(e) {
     console.log('Dropped files', e.dataTransfer.files);
   },
-};
 
-const beforeUpload = (file: FileType) => {
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-  if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!');
+  beforeUpload : (file: FileType) => {
+    console.log(file.type)
+    const isWASMOnly = file.type === 'application/wasm';
+    if (!isWASMOnly) {
+      message.error('You can only upload WASM file!');
+    }
+    
+    return isWASMOnly;
   }
-  const isLt2M = file.size / 1024 / 1024 < 2;
-  if (!isLt2M) {
-    message.error('Image must smaller than 2MB!');
-  }
-  return isJpgOrPng && isLt2M;
 };
 
 const WasmUpload: React.FC = () => (
